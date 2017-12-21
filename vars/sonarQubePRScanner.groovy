@@ -1,14 +1,9 @@
 #!/usr/bin/groovy
-def call(body) {
-    // evaluate the body block, and collect configuration into the object
-    def config = [:]
-    body.resolveStrategy = Closure.DELEGATE_FIRST
-    body.delegate = config
-    body()
-    def serviceName = config.serviceName ?: "sonarqube";
-    def port = config.servicePort ?: "9000";
-    def scannerVersion = config.scannerVersion ?: "2.8"
-    def runSonarScanner = config.runSonarScanner ?: "true"
+def call(accessToken) {
+    def serviceName = "sonarqube";
+    def port = "9000";
+    def scannerVersion = "2.8"
+    def runSonarScanner = "true"
 
     if (runSonarScanner) {
         try {
@@ -19,7 +14,6 @@ def call(body) {
             dir(tmpDir) {
                 def prId = "${env.JOB_NAME}".tokenize('/').last().tokenize('-').last()
                 def jobName = "${env.JOB_NAME}".tokenize('/')[0]
-                def githubToken = sh(returnStdout: true, script: 'echo $GITHUB_ACCESS_TOKEN').trim()
 
                 def localScanner = "scanner-cli.jar"
 
@@ -31,7 +25,7 @@ def call(body) {
 
                 echo("executing sonar scanner ")
 
-                sh "java -jar ${localScanner}  -Dsonar.host.url=http://${serviceName}:${port}  -Dsonar.projectKey=${jobName} -Dsonar.sources=${srcDirectory} -Dsonar.github.pullRequest=${prId} -Dsonar.github.oauth=${githubToken} -Dsonar.analysis.mode=preview"
+                sh "java -jar ${localScanner}  -Dsonar.host.url=http://${serviceName}:${port}  -Dsonar.projectKey=${jobName} -Dsonar.sources=${srcDirectory} -Dsonar.github.pullRequest=${prId} -Dsonar.github.oauth=${accessToken} -Dsonar.analysis.mode=preview"
             }
 
         } catch (err) {
