@@ -25,7 +25,7 @@ def call(accessToken, repository) {
 
                 echo("executing sonar scanner ")
 
-                sh "java -jar ${localScanner}  -Dsonar.host.url=http://${serviceName}:${port}  -Dsonar.projectKey=${jobName} -Dsonar.sources=${srcDirectory} -Dsonar.github.repository=${repository} -Dsonar.github.pullRequest=${prId} -Dsonar.github.oauth=${accessToken} -Dsonar.analysis.mode=preview -Dsonar.projectBaseDir=${srcDirectory} -Dsonar.java.binaries=${srcDirectory}/target/classes -Dsonar.login=admin -Dsonar.password=admin"
+                sh "java -jar ${localScanner}  -Dsonar.host.url=http://${serviceName}:${port}  -Dsonar.projectKey=${jobName} -Dsonar.sources=${srcDirectory}/src -Dsonar.github.repository=${repository} -Dsonar.github.pullRequest=${prId} -Dsonar.github.oauth=${accessToken} -Dsonar.analysis.mode=preview -Dsonar.projectBaseDir=${srcDirectory} -Dsonar.java.binaries=${srcDirectory}/target/classes -Dsonar.login=admin -Dsonar.password=admin"
             }
 
         } catch (err) {
