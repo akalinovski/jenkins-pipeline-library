@@ -1,14 +1,9 @@
 #!/usr/bin/groovy
-def call(body) {
-    // evaluate the body block, and collect configuration into the object
-    def config = [:]
-    body.resolveStrategy = Closure.DELEGATE_FIRST
-    body.delegate = config
-    body()
-    def serviceName = config.serviceName ?: "sonarqube";
-    def port = config.servicePort ?: "9000";
-    def scannerVersion = config.scannerVersion ?: "2.8"
-    def runSonarScanner = config.runSonarScanner ?: "true"
+def call(accessToken, repository, sonarHost) {
+    def serviceName = "sonarqube";
+    def port = "9000";
+    def scannerVersion = "2.8"
+    def runSonarScanner = "true"
 
     if (runSonarScanner) {
         try {
@@ -29,7 +24,7 @@ def call(body) {
 
                 echo("executing sonar scanner ")
 
-                sh "java -jar ${localScanner}  -Dsonar.host.url=http://${serviceName}:${port}  -Dsonar.projectKey=${jobName} -Dsonar.projectBaseDir=${srcDirectory} -Dsonar.java.binaries=${srcDirectory}/target/classes -Dsonar.sources=${srcDirectory} -Dsonar.login=admin -Dsonar.password=admin"
+                sh "java -jar ${localScanner} -Dsonar.host.url=${sonarHost} -Dsonar.projectKey=${jobName} -Dsonar.projectBaseDir=${srcDirectory} -Dsonar.java.binaries=${srcDirectory}/target/classes -Dsonar.sources=${srcDirectory} -Dsonar.login=admin -Dsonar.password=admin"
             }
 
         } catch (err) {
