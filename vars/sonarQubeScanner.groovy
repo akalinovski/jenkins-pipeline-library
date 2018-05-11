@@ -1,5 +1,5 @@
 #!/usr/bin/groovy
-def call(accessToken, repository, sonarHost) {
+def call(accessToken, repository, sonarHost, branchName) {
     def serviceName = "sonarqube";
     def port = "9000";
     def scannerVersion = "2.8"
@@ -24,7 +24,7 @@ def call(accessToken, repository, sonarHost) {
 
                 echo("executing sonar scanner ")
 
-                sh "java -jar ${localScanner} -Dsonar.host.url=${sonarHost} -Dsonar.projectKey=${jobName} -Dsonar.projectBaseDir=${srcDirectory} -Dsonar.java.binaries=${srcDirectory}/target/classes -Dsonar.sources=${srcDirectory} -Dsonar.login=admin -Dsonar.password=admin"
+                sh "java -jar ${localScanner} -Dsonar.host.url=${sonarHost} -Dsonar.projectKey=${jobName} -Dsonar.branch=${branchName} -Dsonar.projectBaseDir=${srcDirectory} -Dsonar.java.binaries=${srcDirectory}/target/classes -Dsonar.sources=${srcDirectory} -Dsonar.login=admin -Dsonar.password=admin"
             }
 
         } catch (err) {
