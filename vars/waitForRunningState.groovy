@@ -13,17 +13,6 @@ def call(String namespace) {
                 sh "kubectl --namespace='${namespace}' get pods"
                 sleep 10
             }
-
-            while (true) {
-                def servicesStatus = sh(returnStdout: true, script: "kubectl --namespace='${namespace}' get services --no-headers").trim()
-                def notRunning = servicesStatus.readLines().findAll { line -> line.contains('pending') }
-                if (notRunning.isEmpty()) {
-                    echo 'All pods are running'
-                    break
-                }
-                sh "kubectl --namespace='${namespace}' get services"
-                sleep 10
-            }
         }
     } catch (err) {
         echo "The cluster is in wrong state:"
